@@ -9,7 +9,6 @@ import { handleQuestion } from "@/utils/openai";
 import { updateUser } from "@/utils/firebase";
 import { surveyResponse } from "./survey";
 async function handler(request, response) {
-  console.log("-------bot handler received-------");
   try {
     let ctx = request.body.callback_query;
     if (request.body.callback_query) {

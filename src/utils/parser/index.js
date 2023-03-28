@@ -58,7 +58,7 @@ export async function parseReceipt(documentId) {
     return text;
   } catch (e) {
     console.error(e.message);
-    return "Failed to parse the receipt";
+    return "Failed to parse the receipt" + e.message;
   }
   return "Receipt parsed";
 

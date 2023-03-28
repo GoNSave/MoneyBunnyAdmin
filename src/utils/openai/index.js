@@ -1,4 +1,4 @@
-import { reply, bot } from "../telegram";
+import { bot } from "../telegram";
 const { Configuration, OpenAIApi } = require("openai");
 import { AnswerResponse } from "../constants";
 
