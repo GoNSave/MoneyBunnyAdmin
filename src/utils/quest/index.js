@@ -1,6 +1,7 @@
 const { GoogleSpreadsheet } = require("google-spreadsheet");
 
 export async function getQuestData(zone, vehicle, period) {
+  console.log("getQuestData", zone, vehicle, period);
   const sheetIndex = period === "Next Week" ? 1 : 0;
   let message = `${zone} incentive for ${vehicle} ${period}:\n`;
 

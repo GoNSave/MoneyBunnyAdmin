@@ -261,6 +261,7 @@ export const actions = [
     action: "handleQuestIncentive",
     description: "Handle Quest Incentives",
     func: async (ctx, param) => {
+      console.log("---- get quest incentive---", param);
       const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
       const message = await getQuestData(
         ctx.user.zone,

@@ -1,11 +1,13 @@
-import axios from "axios";
+// import axios from "axios";
 import { onCommand } from "./commands";
 import { onAction } from "./actions";
 import { getUser } from "@/utils/firebase";
 import { parseDocument, parseReceipt } from "@/utils/parser";
 import { bot } from "@/utils/telegram";
 import { defaultResponse } from "@/utils/constants";
-
+import { handleQuestion } from "@/utils/openai";
+import { updateUser } from "@/utils/firebase";
+import { surveyResponse } from "./survey";
 async function handler(request, response) {
   console.log("-------bot handler received-------");
   try {

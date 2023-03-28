@@ -21,6 +21,7 @@ export const textToJson = async (json, text) => {
 };
 
 export const getAnswer = async (question) => {
+  console.log("get the answer", question);
   const openai = new OpenAIApi(configuration);
   const prompt = `Answer the question in simple english \n\nQuestion: ${question}\n\nAnswer:`;
 

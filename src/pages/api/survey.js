@@ -4,14 +4,7 @@ const axios = require("axios");
 const fs = require("fs");
 const FormData = require("form-data");
 
-import {
-  addUser,
-  saveMessage,
-  getQuestions,
-  updateUser,
-  getAnswers,
-  getUser,
-} from "@/utils/firebase";
+import { updateUser } from "@/utils/firebase";
 
 import { MainMenu } from "@/utils/constants";
 
