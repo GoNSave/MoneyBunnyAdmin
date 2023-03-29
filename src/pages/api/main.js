@@ -34,6 +34,7 @@ async function handler(request, response) {
       const photos = message.photo;
       if (photos.length > 0) {
         const receiptText = await parseReceipt(
+          ctx,
           photos[photos.length - 1].file_id
         );
         await bot.sendMessage(ctx.from.id, receiptText);

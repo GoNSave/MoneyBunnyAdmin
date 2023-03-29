@@ -34,17 +34,46 @@ export const getAnswer = async (question) => {
 
   return r3.data.choices[0].text;
 };
-
 export const getReceiptData = async (scannedData) => {
   const openai = new OpenAIApi(configuration);
 
-  const prompt = `Convert the following scanned OCR data from food delivery company rider's earning receipt into a json structured data \n\ ${scannedData}\n\nAnswer:`;
-  // Extract text from OCR scanned data using OCR tool
+  const prompt = `Convert the following scanned OCR data from food delivery company rider's earning receipt into a JSON structured data:
+
+  ${scannedData}
+
+  {
+    "user": {
+      "telegramId": "insert telegramId here",
+      "company": "insert company name here",
+      "vehicle": "insert vehicle type here",
+      "name": "insert name here",
+      "zone": "insert zone here"
+    },
+    "time": "insert time here",
+    "date": "insert date here",
+    "location": {
+      "start": "insert start location here",
+      "end": "insert end location here",
+      "stops": "insert stops here"
+    },
+    "distance": "insert distance here",
+    "payment": {
+      "method": "insert payment method here",
+      "netEarnings": "insert net earnings here",
+      "deliveryFee": "insert delivery fee here",
+      "earningAdjustment": "insert earning adjustment here",
+      "totalEarning": "insert total earning here",
+      "tip": "insert tip here"
+    }
+  }
+
+  Answer:`;
+
   const r3 = await openai.createCompletion({
     model: "text-davinci-003",
     prompt,
     max_tokens: 1024,
-    temperature: 0.5,
+    temperature: 0.2,
   });
 
   return r3.data.choices[0].text;
