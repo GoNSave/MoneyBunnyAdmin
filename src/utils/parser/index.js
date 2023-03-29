@@ -2,6 +2,7 @@ import axios from "axios";
 import { getReceiptData } from "@/utils/openai";
 import { fireDb, fireStorage } from "@/utils/fireConfig";
 import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
+import { getRows, appendRow } from "../gsheet";
 import {
   userDocName,
   chatDocName,
@@ -23,52 +24,58 @@ const client = new DocumentProcessorServiceClient();
 
 export const handleReceipt = async (ctx, photoId) => {
   try {
-    const photoUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${photoId}`;
-    const urlRes = await axios.get(photoUrl);
-    const { file_path } = urlRes.data.result;
-    const photoDownloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/${file_path}`;
-    const downloadRes = await axios.get(photoDownloadUrl, {
-      responseType: "arraybuffer",
-    });
-    const photoData = new Uint8Array(downloadRes.data);
+    // const photoUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${photoId}`;
+    // const urlRes = await axios.get(photoUrl);
+    // const { file_path } = urlRes.data.result;
+    // const photoDownloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/${file_path}`;
+    // const downloadRes = await axios.get(photoDownloadUrl, {
+    //   responseType: "arraybuffer",
+    // });
+    // const photoData = new Uint8Array(downloadRes.data);
 
-    const photoExtension = file_path.split(".").pop();
-    const photoUploadPath = `users/${ctx.user.id}/${photoId}.${photoExtension}`;
-    const storageRef = ref(fireStorage, photoUploadPath);
+    // const photoExtension = file_path.split(".").pop();
+    // const photoUploadPath = `users/${ctx.user.id}/${photoId}.${photoExtension}`;
+    // const storageRef = ref(fireStorage, photoUploadPath);
 
-    await uploadBytes(storageRef, photoData);
+    // await uploadBytes(storageRef, photoData);
 
-    const photoFirestoreUrl = await getDownloadURL(storageRef);
+    // const photoFirestoreUrl = await getDownloadURL(storageRef);
 
-    const name = `projects/${projectId}/locations/${location}/processors/${processorId}`;
-    const request = {
-      name,
-      rawDocument: {
-        content: photoData,
-        mimeType: "image/png",
-      },
-    };
+    // const name = `projects/${projectId}/locations/${location}/processors/${processorId}`;
+    // const request = {
+    //   name,
+    //   rawDocument: {
+    //     content: photoData,
+    //     mimeType: "image/png",
+    //   },
+    // };
 
-    console.log(photoFirestoreUrl);
-    const [result] = await client.processDocument(request);
-    const { document } = result;
+    // console.log(photoFirestoreUrl);
+    // const [result] = await client.processDocument(request);
+    // const { document } = result;
 
-    let { text } = document;
+    // let { text } = document;
 
-    const receipt = `${text}, telegramId: ${ctx.user.telegramId},
-    userId: ${ctx.user.id},
-    telegramId: ${ctx.user.telegramId},
-    downloadUrl: ${photoFirestoreUrl},
-    company: ${ctx.user.company},
-    vehicle: ${ctx.user.vehicle},
-    name: ${ctx.user.first_name},
-    zone: ${ctx.user.zone},`;
+    // const receipt = `${text}, telegramId: ${ctx.user.telegramId},
+    // userId: ${ctx.user.id},
+    // telegramId: ${ctx.user.telegramId},
+    // downloadUrl: ${photoFirestoreUrl},
+    // company: ${ctx.user.company},
+    // vehicle: ${ctx.user.vehicle},
+    // name: ${ctx.user.first_name},
+    // zone: ${ctx.user.zone},`;
 
-    const receiptText = await getReceiptData(receipt);
-    if (receiptText === null) {
-      return "";
-    }
+    // const receiptText = await getReceiptData(receipt);
+    // if (receiptText === null) {
+    //   return "";
+    // }
 
+    //update the google sheet with
+    //https://thenewstack.io/how-to-use-google-sheets-as-a-database-with-react-and-ssr/
+    const rows = appendRow(process.env.GOOGLE_SHEET_SURVEY_RECEIPT_ID, 1, [
+      "name",
+      "ashok",
+    ]);
     console.log("-------- name value pair is------");
     console.log(receiptText, typeof receiptText);
     console.log("--------------------------------");

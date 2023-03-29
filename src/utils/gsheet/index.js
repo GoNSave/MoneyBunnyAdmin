@@ -5,7 +5,7 @@ export const getRows = async (sheetId, sheetIndex) => {
     const private_key = process.env.GOOGLE_PRIVATE_KEY;
     const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_SURGE_DATA_ID);
     await doc.useServiceAccountAuth({
-      client_email: sheetId,
+      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       private_key: private_key.replace(/\\n/gm, "\n"),
     });
     await doc.getInfo();
@@ -15,6 +15,43 @@ export const getRows = async (sheetId, sheetIndex) => {
   } catch (e) {
     console.log(e.message);
   }
+};
+
+export const appendRow = async (sheetId, sheetIndex, row) => {
+  try {
+    const private_key = process.env.GOOGLE_PRIVATE_KEY;
+    const doc = new GoogleSpreadsheet(
+      process.env.GOOGLE_SHEET_SURVEY_RECEIPT_ID
+    );
+    await doc.useServiceAccountAuth({
+      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      private_key: private_key.replace(/\\n/gm, "\n"),
+    });
+    await doc.getInfo();
+    const sheet = doc.sheetsByIndex[0];
+    const r = await sheet.addRow(row);
+    const rows = await sheet.getRows();
+    console.log(rows);
+    return rows;
+  } catch (e) {
+    console.log(e.message);
+  }
+
+  // try {
+
+  //   // const private_key = process.env.GOOGLE_PRIVATE_KEY;
+  //   // const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_SURVEY_DATA_ID);
+  //   // await doc.useServiceAccountAuth({
+  //   //   client_email: sheetId,
+  //   //   private_key: private_key.replace(/\\n/gm, "\n"),
+  //   // });
+  //   // await doc.getInfo();
+  //   // const sheet = doc.sheetsByIndex[0];
+  //   // const rows = await sheet.getRows();
+  //   // sheet.appendRow(row);
+  // } catch (e) {
+  //   console.log(e.message);
+  // }
 };
 
 export const getRowsBySheetName = async (sheetId, sheetName) => {
