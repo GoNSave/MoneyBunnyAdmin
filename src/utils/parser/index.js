@@ -1,5 +1,15 @@
 import axios from "axios";
-import { getReceiptData } from "../openai";
+import { getReceiptData } from "@/utils/openai";
+import { fireDb, fireStorage } from "@/utils/fireConfig";
+import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
+import {
+  userDocName,
+  chatDocName,
+  filesDocName,
+  receiptDocName,
+} from "@/utils/constants";
+import { doc, setDoc } from "firebase/firestore/lite";
+import { updateReceipt } from "@/utils/firebase/receipt";
 const pdfParse = require("pdf-parse");
 const projectId = "gns-gpt-bot";
 const location = "us"; // Format is 'us' or 'eu'
@@ -11,8 +21,41 @@ const { DocumentProcessorServiceClient } =
 
 const client = new DocumentProcessorServiceClient();
 
-const { googleapi } = require("googleapis");
+export const handleReceipt = async (ctx, photoId) => {
+  try {
+    const photoUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${photoId}`;
+    const urlRes = await axios.get(photoUrl);
+    const { file_path } = urlRes.data.result;
+    const photoDownloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/${file_path}`;
+    const downloadRes = await axios.get(photoDownloadUrl, {
+      responseType: "arraybuffer",
+    });
+    const photoData = new Uint8Array(downloadRes.data);
 
+    const photoExtension = file_path.split(".").pop();
+    const photoUploadPath = `users/${ctx.user.id}/${photoId}.${photoExtension}`;
+    const storageRef = ref(fireStorage, photoUploadPath);
+
+    await uploadBytes(storageRef, photoData);
+
+    const photoFirestoreUrl = await getDownloadURL(storageRef);
+
+    console.log("----- dwonload path--");
+    console.log(photoFirestoreUrl);
+    return updateReceipt({
+      userId: ctx.user.id,
+      telegramId: ctx.user.telegramId,
+      downloadUrl: photoFirestoreUrl,
+      status: "added",
+      basket: "1.0",
+      week: 88,
+    });
+
+    return "ok";
+  } catch (error) {
+    console.log("Failed to handle the receipt", error.message);
+  }
+};
 export async function parseReceipt(ctx, documentId) {
   try {
     const documentUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${documentId}`;
@@ -44,6 +87,7 @@ export async function parseReceipt(ctx, documentId) {
 
     let { text } = document;
 
+    return text;
     const receiptData = `${text} \n telegramId: ${ctx.user.telegramId}\n
     company: ${ctx.user.company}\n
     vehicle: ${ctx.user.vehicle}\n

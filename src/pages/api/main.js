@@ -2,7 +2,7 @@
 import { onCommand } from "./commands";
 import { onAction } from "./actions";
 import { getUser } from "@/utils/firebase";
-import { parseDocument, parseReceipt } from "@/utils/parser";
+import { parseDocument, handleReceipt } from "@/utils/parser";
 import { bot } from "@/utils/telegram";
 import { defaultResponse } from "@/utils/constants";
 import { handleQuestion } from "@/utils/openai";
@@ -78,10 +78,13 @@ async function handler(request, response) {
       console.log("------- photo arrived-------");
       const photos = message.photo;
       if (photos.length > 0) {
-        const receiptText = await parseReceipt(
+        const receiptText = await handleReceipt(
           ctx,
           photos[photos.length - 1].file_id
         );
+        // photos.forEach((photo) => {
+        //   console.log(photo.file_id, photo);
+        // });
         // if (!validateReceipt(receiptText)) {
         //   return await bot.sendMessage(
         //     ctx.from.id,

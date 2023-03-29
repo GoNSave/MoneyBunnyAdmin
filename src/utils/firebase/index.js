@@ -4,6 +4,7 @@ import {
   chatDocName,
   questionsDocName,
   countryDocName,
+  receiptDocName,
 } from "../constants";
 
 // import { doc, getDoc } from "firebase/firestore";
@@ -149,6 +150,30 @@ export const getUser = async (user) => {
   return { id: querySnapshot.docs[0].id, ...querySnapshot.docs[0].data() };
 };
 
+export const updateReceipt = async (user, downloadUrl) => {
+  console.log("Updating receipt", url);
+  const q = query(
+    collection(fireDb, receiptDocName),
+    where("downloadUrl", "==", downloadUrl)
+  );
+
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.empty) {
+    return addReceipt(user);
+  }
+
+  const docRef = querySnapshot.docs[0].ref;
+  await updateDoc(docRef, user);
+  const docSnapshot = await getDoc(docRef);
+  return { id: docSnapshot.id, ...docSnapshot.data() };
+};
+
+export const addReceitp = async (user, downloadUrl) => {
+  const docRef = await addDoc(collection(fireDb, userDocName), user);
+  const docSnapshot = await getDoc(docRef);
+  return { id: docSnapshot.id, ...docSnapshot.data() };
+};
 export const updateUser = async (user) => {
   console.log("Updating user", user);
   const q = query(

@@ -1,6 +1,7 @@
 import { bot, reply } from "./telegram";
 
 export const userDocName = "users";
+export const receiptDocName = "receipts";
 export const countryDocName = "country";
 export const questionsDocName = "questions";
 export const chatDocName = "chat";
