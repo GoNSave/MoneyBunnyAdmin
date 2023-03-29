@@ -49,6 +49,7 @@ export const handleReceipt = async (ctx, photoId) => {
       },
     };
 
+    console.log(photoFirestoreUrl);
     const [result] = await client.processDocument(request);
     const { document } = result;
 
@@ -68,14 +69,19 @@ export const handleReceipt = async (ctx, photoId) => {
       return "";
     }
 
-    console.log(
-      typeof receiptText,
-      receiptText.userId,
-      receiptText.downloadUrl
-    );
+    console.log("-------- name value pair is------");
+    console.log(receiptText, typeof receiptText);
+    console.log("--------------------------------");
 
-    const ret = await updateReceipt(receiptText);
-    return `Date: ${receiptText.date}\n Time:${receiptText.time}\n Start: ${receiptText.location.start}\n End: ${receiptText.location.end}\n Distance: ${receiptText.distance}\n  Earning: ${receiptText.payment.totalEarning}`;
+    return "";
+    // console.log(
+    //   typeof receiptText,
+    //   receiptText.userId,
+    //   receiptText.downloadUrl
+    // );
+
+    // const ret = await updateReceipt(receiptText);
+    // return `Time: ${receiptText.date}, ${receiptText.time}\n Start: ${receiptText.location.start}\n End: ${receiptText.location.end}\n Distance: ${receiptText.distance}\n Earning: ${receiptText.payment.totalEarning}`;
   } catch (error) {
     console.log("Failed to handle the receipt", error.message);
   }

@@ -39,6 +39,28 @@ export const getReceiptData = async (scannedData) => {
   try {
     const openai = new OpenAIApi(configuration);
 
+    const prompt = `Find time, date, start location, end location, number of stops, distance, payment method, net earnings, delivery fee, earning adjustment, total earnings, tips and other important information in following data and convert it into a json key value pair \n
+  ${scannedData}
+  Answer:`;
+
+    const r3 = await openai.createCompletion({
+      model: "text-davinci-003",
+      prompt,
+      max_tokens: 1024,
+      temperature: 0.2,
+    });
+
+    return JSON.parse(r3.data.choices[0].text);
+  } catch (error) {
+    console.log("----- openai error -----", error.message);
+    return null;
+  }
+};
+
+export const getReceiptData1 = async (scannedData) => {
+  try {
+    const openai = new OpenAIApi(configuration);
+
     const prompt = `Convert the following scanned OCR data from food delivery company rider's earning receipt into a JSON structured data:
 
   ${scannedData}
