@@ -24,73 +24,93 @@ const client = new DocumentProcessorServiceClient();
 
 export const handleReceipt = async (ctx, photoId) => {
   try {
-    // const photoUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${photoId}`;
-    // const urlRes = await axios.get(photoUrl);
-    // const { file_path } = urlRes.data.result;
-    // const photoDownloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/${file_path}`;
-    // const downloadRes = await axios.get(photoDownloadUrl, {
-    //   responseType: "arraybuffer",
-    // });
-    // const photoData = new Uint8Array(downloadRes.data);
+    const photoUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${photoId}`;
+    const urlRes = await axios.get(photoUrl);
+    const { file_path } = urlRes.data.result;
+    const photoDownloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/${file_path}`;
+    const downloadRes = await axios.get(photoDownloadUrl, {
+      responseType: "arraybuffer",
+    });
+    const photoData = new Uint8Array(downloadRes.data);
 
-    // const photoExtension = file_path.split(".").pop();
-    // const photoUploadPath = `users/${ctx.user.id}/${photoId}.${photoExtension}`;
-    // const storageRef = ref(fireStorage, photoUploadPath);
+    const photoExtension = file_path.split(".").pop();
+    const photoUploadPath = `users/${ctx.user.id}/${photoId}.${photoExtension}`;
+    const storageRef = ref(fireStorage, photoUploadPath);
 
-    // await uploadBytes(storageRef, photoData);
+    await uploadBytes(storageRef, photoData);
 
-    // const photoFirestoreUrl = await getDownloadURL(storageRef);
+    const photoFirestoreUrl = await getDownloadURL(storageRef);
 
-    // const name = `projects/${projectId}/locations/${location}/processors/${processorId}`;
-    // const request = {
-    //   name,
-    //   rawDocument: {
-    //     content: photoData,
-    //     mimeType: "image/png",
-    //   },
-    // };
+    const name = `projects/${projectId}/locations/${location}/processors/${processorId}`;
+    const request = {
+      name,
+      rawDocument: {
+        content: photoData,
+        mimeType: "image/png",
+      },
+    };
 
-    // console.log(photoFirestoreUrl);
-    // const [result] = await client.processDocument(request);
-    // const { document } = result;
+    console.log(photoFirestoreUrl);
+    const [result] = await client.processDocument(request);
+    const { document } = result;
 
-    // let { text } = document;
+    let { text } = document;
 
-    // const receipt = `${text}, telegramId: ${ctx.user.telegramId},
-    // userId: ${ctx.user.id},
-    // telegramId: ${ctx.user.telegramId},
-    // downloadUrl: ${photoFirestoreUrl},
-    // company: ${ctx.user.company},
-    // vehicle: ${ctx.user.vehicle},
-    // name: ${ctx.user.first_name},
-    // zone: ${ctx.user.zone},`;
-
-    // const receiptText = await getReceiptData(receipt);
-    // if (receiptText === null) {
-    //   return "";
-    // }
-
-    //update the google sheet with
-    //https://thenewstack.io/how-to-use-google-sheets-as-a-database-with-react-and-ssr/
-    const rows = appendRow(process.env.GOOGLE_SHEET_SURVEY_RECEIPT_ID, 1, [
-      "name",
-      "ashok",
-    ]);
+    console.log(text);
+    let receiptText = await getReceiptData(text);
     console.log("-------- name value pair is------");
     console.log(receiptText, typeof receiptText);
     console.log("--------------------------------");
 
-    return "";
-    // console.log(
-    //   typeof receiptText,
-    //   receiptText.userId,
-    //   receiptText.downloadUrl
-    // );
+    if (
+      !receiptText ||
+      !receiptText.startLocation ||
+      !receiptText.endLocation ||
+      !receiptText.totalEarnings
+    ) {
+      return null;
+    }
 
-    // const ret = await updateReceipt(receiptText);
-    // return `Time: ${receiptText.date}, ${receiptText.time}\n Start: ${receiptText.location.start}\n End: ${receiptText.location.end}\n Distance: ${receiptText.distance}\n Earning: ${receiptText.payment.totalEarning}`;
+    receiptText.telegramId = ctx.user.telegramId;
+    receiptText.userId = ctx.user.id;
+    receiptText.company = ctx.user.company;
+    receiptText.vehicle = ctx.user.vehicle;
+    receiptText.name = ctx.user.first_name;
+    receiptText.zone = ctx.user.zone;
+    receiptText.downloadUrl = photoFirestoreUrl;
+
+    console.log(Object.values(receiptText));
+
+    const rows = await appendRow(
+      process.env.GOOGLE_SHEET_SURVEY_RECEIPT_ID,
+      1,
+      // Object.values(receiptText)
+      [
+        ctx.user.telegramId,
+        receiptText.time,
+        receiptText.date,
+        receiptText.startLocation,
+        receiptText.endLocation,
+        receiptText.stops,
+        receiptText.distance,
+        receiptText.payment,
+        receiptText.method,
+        receiptText.netEarnings,
+        receiptText.deliveryFee,
+        receiptText.totalEarnings,
+        receiptText.tips,
+        ctx.user.id,
+        ctx.user.company,
+        ctx.user.vehicle,
+        ctx.user.zone,
+        photoFirestoreUrl,
+      ]
+    );
+
+    return `Time: ${receiptText.date}, ${receiptText.time}\n Start: ${receiptText.startLocation}\n End: ${receiptText.endLocation}\n Distance: ${receiptText.distance}\n Earning: ${receiptText.totalEarnings}`;
   } catch (error) {
     console.log("Failed to handle the receipt", error.message);
+    return "";
   }
 };
 

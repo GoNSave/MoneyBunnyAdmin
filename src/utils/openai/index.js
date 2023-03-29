@@ -39,7 +39,7 @@ export const getReceiptData = async (scannedData) => {
   try {
     const openai = new OpenAIApi(configuration);
 
-    const prompt = `Find time, date, start location, end location, number of stops, distance, payment method, net earnings, delivery fee, earning adjustment, total earnings, tips and other important information in following data and convert it into a json key value pair \n
+    const prompt = `Find time, date, startLocation, endLocation, stops, distance, payment,Method, netEarnings, deliveryFee, earningAdjustment, totalEarnings, tips and other important information in following data and convert it into a json key value pair \n
   ${scannedData}
   Answer:`;
 

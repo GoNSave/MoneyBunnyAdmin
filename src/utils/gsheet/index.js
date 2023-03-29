@@ -31,7 +31,6 @@ export const appendRow = async (sheetId, sheetIndex, row) => {
     const sheet = doc.sheetsByIndex[0];
     const r = await sheet.addRow(row);
     const rows = await sheet.getRows();
-    console.log(rows);
     return rows;
   } catch (e) {
     console.log(e.message);
