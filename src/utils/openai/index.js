@@ -36,13 +36,16 @@ export const getAnswer = async (question) => {
 };
 
 export const getReceiptData = async (scannedData) => {
-  const openai = new OpenAIApi(configuration);
+  try {
+    const openai = new OpenAIApi(configuration);
 
-  const prompt = `Convert the following scanned OCR data from food delivery company rider's earning receipt into a JSON structured data:
+    const prompt = `Convert the following scanned OCR data from food delivery company rider's earning receipt into a JSON structured data:
 
   ${scannedData}
 
   {
+    userId: "insert userId here",
+    downloadUrl: "insert downloadUrl here",,
     user: {
       telegramId: "insert telegramId here",
       company: "insert company name here",
@@ -73,17 +76,22 @@ export const getReceiptData = async (scannedData) => {
 
   Answer:`;
 
-  const r3 = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt,
-    max_tokens: 1024,
-    temperature: 0.2,
-  });
+    const r3 = await openai.createCompletion({
+      model: "text-davinci-003",
+      prompt,
+      max_tokens: 1024,
+      temperature: 0.2,
+    });
 
-  const jsonString = r3.data.choices[0].text;
-  // const jsonObject = JSON.parse(jsonString);
-
-  return jsonString;
+    console.log(r3.data.choices);
+    const jsonString = r3.data.choices[0].text;
+    const jsonObject = JSON.parse(jsonString);
+    console.log(jsonObject, typeof jsonObject);
+    return jsonObject;
+  } catch (error) {
+    console.log("----- openai error -----", error.message);
+    return null;
+  }
 };
 
 export const handleQuestion = async (ctx) => {

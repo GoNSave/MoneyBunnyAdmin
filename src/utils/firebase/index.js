@@ -169,11 +169,12 @@ export const updateReceipt = async (user, downloadUrl) => {
   return { id: docSnapshot.id, ...docSnapshot.data() };
 };
 
-export const addReceitp = async (user, downloadUrl) => {
+export const addReceipt = async (user, downloadUrl) => {
   const docRef = await addDoc(collection(fireDb, userDocName), user);
   const docSnapshot = await getDoc(docRef);
   return { id: docSnapshot.id, ...docSnapshot.data() };
 };
+
 export const updateUser = async (user) => {
   console.log("Updating user", user);
   const q = query(

@@ -8,7 +8,7 @@ import { defaultResponse } from "@/utils/constants";
 import { handleQuestion } from "@/utils/openai";
 import { updateUser } from "@/utils/firebase";
 import { surveyResponse } from "./survey";
-import { AnswerResponse } from "@/utils/constants";
+import { LikeDislikeMainMenu } from "@/utils/constants";
 
 const validateReceipt = (receipt) => {
   const template = {
@@ -91,11 +91,20 @@ async function handler(request, response) {
         //     `Dear ${ctx.user.first_name}, \n Your receipt seems to be invalid, please check and resend. Thanks`
         //   );
         // }
+        if (!receiptText) {
+          await bot.sendMessage(
+            ctx.from.id,
+            `Sorry ${ctx.user.first_name}, I am having difficulty reading this receipt, I will get back to you withing 24 hours..`,
+            LikeDislikeMainMenu
+          );
+          return response.send("OK");
+        }
         await bot.sendMessage(
           ctx.from.id,
           `${ctx.user.first_name} \n I found following data in your receipt \n\n ${receiptText} \n\n If above is correct, please hit the like button and will get back to within 24 hours`,
-          AnswerResponse
+          LikeDislikeMainMenu
         );
+        return response.send("OK");
       }
     }
     if (message?.document) {
@@ -151,6 +160,12 @@ async function handler(request, response) {
     console.log("Error: " + error);
   }
   // console.log(request);
+  await bot.sendMessage(
+    ctx.from.id,
+    `Sorry ${ctx.user.first_name} ! \n I encountered unexpected error, please try again later...`,
+    LikeDislikeMainMenu
+  );
+
   response.status(200).json({ message: "Hello World" });
 }
 

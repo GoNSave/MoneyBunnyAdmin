@@ -40,22 +40,47 @@ export const handleReceipt = async (ctx, photoId) => {
 
     const photoFirestoreUrl = await getDownloadURL(storageRef);
 
-    console.log("----- dwonload path--");
-    console.log(photoFirestoreUrl);
-    return updateReceipt({
-      userId: ctx.user.id,
-      telegramId: ctx.user.telegramId,
-      downloadUrl: photoFirestoreUrl,
-      status: "added",
-      basket: "1.0",
-      week: 88,
-    });
+    const name = `projects/${projectId}/locations/${location}/processors/${processorId}`;
+    const request = {
+      name,
+      rawDocument: {
+        content: photoData,
+        mimeType: "image/png",
+      },
+    };
 
-    return "ok";
+    const [result] = await client.processDocument(request);
+    const { document } = result;
+
+    let { text } = document;
+
+    const receipt = `${text}, telegramId: ${ctx.user.telegramId},
+    userId: ${ctx.user.id},
+    telegramId: ${ctx.user.telegramId},
+    downloadUrl: ${photoFirestoreUrl},
+    company: ${ctx.user.company},
+    vehicle: ${ctx.user.vehicle},
+    name: ${ctx.user.first_name},
+    zone: ${ctx.user.zone},`;
+
+    const receiptText = await getReceiptData(receipt);
+    if (receiptText === null) {
+      return "";
+    }
+
+    console.log(
+      typeof receiptText,
+      receiptText.userId,
+      receiptText.downloadUrl
+    );
+
+    const ret = await updateReceipt(receiptText);
+    return `Date: ${receiptText.date}\n Time:${receiptText.time}\n Start: ${receiptText.location.start}\n End: ${receiptText.location.end}\n Distance: ${receiptText.distance}\n  Earning: ${receiptText.payment.totalEarning}`;
   } catch (error) {
     console.log("Failed to handle the receipt", error.message);
   }
 };
+
 export async function parseReceipt(ctx, documentId) {
   try {
     const documentUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${documentId}`;
