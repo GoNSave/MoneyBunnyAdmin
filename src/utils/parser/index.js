@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getReceiptData } from "../openai";
+const pdfParse = require("pdf-parse");
 const projectId = "gns-gpt-bot";
 const location = "us"; // Format is 'us' or 'eu'
 // const processorId = "e7a923443fcb4ffb"; // form parser id
@@ -70,26 +71,27 @@ export async function parseReceipt(ctx, documentId) {
 }
 
 export async function parseDocument(documentId) {
-  return "Come back later, I can't read pdf documents yet";
-  // const pdf = message.document;
-  // // const documentId = pdf.file_id;
-  // const documentUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${documentId}`;
-  // console.log("documentUrl", documentUrl);
-  // const urlRes = await axios.get(documentUrl);
-  // const { file_path } = urlRes.data.result;
-  // const downloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/${file_path}`;
+  // return "Come back later, I can't read pdf documents yet";
+  // const documentId = pdf.file_id;
+  const documentUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${documentId}`;
+  console.log("documentUrl", documentUrl);
+  const urlRes = await axios.get(documentUrl);
+  const { file_path } = urlRes.data.result;
+  const downloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/${file_path}`;
 
-  // console.log("downloadUrl", downloadUrl);
-  // const response = await axios.get(downloadUrl, {
-  //   responseType: "arraybuffer",
-  // });
-  // const imageData = new Uint8Array(response.data);
+  console.log("downloadUrl", downloadUrl);
+  const response = await axios.get(downloadUrl, {
+    responseType: "arraybuffer",
+  });
+  const imageData = new Uint8Array(response.data);
 
-  // console.log("Raw data", imageData);
+  console.log("Raw data", imageData);
 
-  // const encodedImage = Buffer.from(imageData).toString("base64");
-  // console.log("encodedImage data", imageData);
-  // const pdfData = await pdfParse(imageData);
+  const encodedImage = Buffer.from(imageData).toString("base64");
+  console.log("encodedImage data", imageData);
+  const pdfData = await pdfParse(imageData);
+  // console.log("----------Start pdf----------------------");
   // console.log("actual data", pdfData.text);
-  // return pdfData;
+  // console.log("-----------End pdf---------------------");
+  return pdfData.text;
 }

@@ -96,11 +96,15 @@ async function handler(request, response) {
       }
     }
     if (message?.document) {
-      console.log("------- document arrived-------");
-      const pdf = message.document;
-      const documentId = pdf.file_id;
-      const docText = await parseDocument(documentId);
-      await bot.sendMessage(ctx.from.id, docText);
+      console.log("------- document arrived-------", message?.document);
+
+      const docText = await parseDocument(message?.document?.file_id);
+      const chunkSize = 4096;
+      for (let i = 0; i < docText.length; i += chunkSize) {
+        const chunk = docText.substring(i, i + chunkSize);
+        await bot.sendMessage(ctx.from.id, chunk);
+        await new Promise((resolve) => setTimeout(resolve, 500)); // Pause for 500ms
+      }
     }
 
     if (!request?.body?.message?.text) {
