@@ -1,6 +1,7 @@
 import { fireDb } from "../fireConfig";
 import {
   userDocName,
+  receiptDocName,
   chatDocName,
   questionsDocName,
   countryDocName,
@@ -135,7 +136,21 @@ export const getZones = async (country, city) => {
   }));
 };
 
+export const addReceipt = async (ctx, receiptUrl) => {
+  const filesRef = doc(
+    fireDb,
+    `${receiptDocName}/${ctx.user.id}/${filesDocName}`,
+    `${Date.now().toString()}`
+  );
+
+  return await setDoc(filesRef, {
+    userId: ctx.user.id,
+    url: receiptUrl,
+  });
+};
+
 export const getUser = async (user) => {
+  console.log(`------getUser-------`, user);
   const q = query(
     collection(fireDb, userDocName),
     where("telegramId", "==", user.telegramId)

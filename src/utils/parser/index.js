@@ -1,5 +1,9 @@
+import { fireStorage } from "../fireConfig";
+import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
+import { telegramBot } from "../telegram";
 import axios from "axios";
 import { getReceiptData } from "../openai";
+import { addReceipt } from "../firebase";
 const pdfParse = require("pdf-parse");
 const projectId = "gns-gpt-bot";
 const location = "us"; // Format is 'us' or 'eu'
@@ -11,39 +15,46 @@ const { DocumentProcessorServiceClient } =
 
 const client = new DocumentProcessorServiceClient();
 
-const { googleapi } = require("googleapis");
-
-export async function parseReceipt(ctx, documentId) {
+export async function handleReceipt(ctx, photoId) {
   try {
-    const documentUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${documentId}`;
-    console.log("documentUrl", documentUrl);
-    const urlRes = await axios.get(documentUrl);
+    const photoUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/getFile?file_id=${photoId}`;
+    const urlRes = await axios.get(photoUrl);
     const { file_path } = urlRes.data.result;
+    console.log("photoUrl", file_path);
+    const extn = file_path.split(".").pop();
+
     const downloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/${file_path}`;
     const response = await axios.get(downloadUrl, {
       responseType: "arraybuffer",
     });
-    const imageData = new Uint8Array(response.data);
+    const photoData = new Uint8Array(response.data);
+    // const encodedImage = Buffer.from(imageData).toString("base64");
+    // const name = `projects/${projectId}/locations/${location}/processors/${processorId}`;
+    // const request = {
+    //   name,
+    //   rawDocument: {
+    //     content: photoData,
+    //     mimeType: "image/png",
+    //   },
+    // };
 
-    // console.log("Raw data", imageData);
+    // const [result] = await client.processDocument(request);
+    // const { document } = result;
 
-    const encodedImage = Buffer.from(imageData).toString("base64");
-    // console.log("encodedImage data", imageData);
+    // let { text } = document;
+    const uploadPhotoName = `reciepts/${ctx.user.id}/${photoId}.${extn}`;
 
-    const name = `projects/${projectId}/locations/${location}/processors/${processorId}`;
-    const request = {
-      name,
-      rawDocument: {
-        content: encodedImage,
-        mimeType: "image/png",
-      },
-    };
+    console.log("uploadPhotoName", uploadPhotoName);
+    const storageRef = ref(fireStorage, uploadPhotoName);
 
-    const [result] = await client.processDocument(request);
-    const { document } = result;
+    await uploadBytes(storageRef, photoData);
 
-    let { text } = document;
+    const url = await getDownloadURL(storageRef);
+    console.log("Uploaded on google at ", url);
 
+    // const recDec = await addReceipt(ctx, url);
+
+    return "text";
     const receiptData = `${text} \n telegramId: ${ctx.user.telegramId}\n
     company: ${ctx.user.company}\n
     vehicle: ${ctx.user.vehicle}\n

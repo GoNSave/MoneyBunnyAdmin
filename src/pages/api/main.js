@@ -2,7 +2,7 @@
 import { onCommand } from "./commands";
 import { onAction } from "./actions";
 import { getUser } from "@/utils/firebase";
-import { parseDocument, parseReceipt } from "@/utils/parser";
+import { parseDocument, handleReceipt } from "@/utils/parser";
 import { bot } from "@/utils/telegram";
 import { defaultResponse } from "@/utils/constants";
 import { handleQuestion } from "@/utils/openai";
@@ -71,29 +71,39 @@ async function handler(request, response) {
     console.log(message);
 
     if (message?.photo) {
-      await bot.sendMessage(
-        ctx.from.id,
-        `Please wait, let me check your receipt...`
-      );
+      // await bot.sendMessage(
+      //   ctx.from.id,
+      //   `Please wait, let me check your receipt...`
+      // );
       console.log("------- photo arrived-------");
       const photos = message.photo;
       if (photos.length > 0) {
-        const receiptText = await parseReceipt(
-          ctx,
-          photos[photos.length - 1].file_id
+        // const receiptText = await handleReceipt(
+        //   ctx,
+        //   photos[photos.length - 1].file_id
+        // );
+        for (let i = 0; i < photos.length; i++) {
+          console.log(photos[i].file_id);
+        }
+
+        return await bot.sendMessage(
+          ctx.from.id,
+          `Thanks ${ctx.user.first_name}, we received your receipt, we will get back to you within 24 hours.`
         );
+
         // if (!validateReceipt(receiptText)) {
         //   return await bot.sendMessage(
         //     ctx.from.id,
         //     `Dear ${ctx.user.first_name}, \n Your receipt seems to be invalid, please check and resend. Thanks`
         //   );
         // }
-        await bot.sendMessage(
-          ctx.from.id,
-          `${ctx.user.first_name} \n I found following data in your receipt \n\n ${receiptText} \n\n If above is correct, please hit the like button and will get back to within 24 hours`,
-          AnswerResponse
-        );
+        // await bot.sendMessage(
+        //   ctx.from.id,
+        //   `${ctx.user.first_name} \n I found following data in your receipt \n\n ${receiptText} \n\n If above is correct, please hit the like button and will get back to within 24 hours`,
+        //   AnswerResponse
+        // );
       }
+      return response.send("OK");
     }
     if (message?.document) {
       console.log("------- document arrived-------", message?.document);
