@@ -8,6 +8,47 @@ import { defaultResponse } from "@/utils/constants";
 import { handleQuestion } from "@/utils/openai";
 import { updateUser } from "@/utils/firebase";
 import { surveyResponse } from "./survey";
+import { AnswerResponse } from "@/utils/constants";
+
+const validateReceipt = (receipt) => {
+  const template = {
+    user: {
+      telegramId: "insert telegramId here",
+      company: "insert company name here",
+      vehicle: "insert vehicle type here",
+      name: "insert name here",
+      zone: "insert zone here",
+    },
+    time: "insert time here",
+    date: "insert date here",
+    location: {
+      start: "insert start location here",
+      end: "insert end location here",
+      stops: "insert stops here",
+    },
+    distance: "insert distance here",
+    payment: {
+      method: "insert payment method here",
+      netEarnings: "insert net earnings here",
+      deliveryFee: "insert delivery fee here",
+      earningAdjustment: "insert earning adjustment here",
+      totalEarning: "insert total earning here",
+      tip: "insert tip here",
+    },
+    status: "added",
+    basket: "1.0",
+    week: 88,
+  };
+  if (
+    receipt.start === template.start &&
+    receipt.end === template.end &&
+    receipt.time === template.time
+  ) {
+    return false;
+  }
+  return true;
+};
+
 async function handler(request, response) {
   try {
     let ctx = request.body.callback_query;
@@ -30,6 +71,10 @@ async function handler(request, response) {
     console.log(message);
 
     if (message?.photo) {
+      await bot.sendMessage(
+        ctx.from.id,
+        `Please wait, let me check your receipt...`
+      );
       console.log("------- photo arrived-------");
       const photos = message.photo;
       if (photos.length > 0) {
@@ -37,7 +82,17 @@ async function handler(request, response) {
           ctx,
           photos[photos.length - 1].file_id
         );
-        await bot.sendMessage(ctx.from.id, receiptText);
+        // if (!validateReceipt(receiptText)) {
+        //   return await bot.sendMessage(
+        //     ctx.from.id,
+        //     `Dear ${ctx.user.first_name}, \n Your receipt seems to be invalid, please check and resend. Thanks`
+        //   );
+        // }
+        await bot.sendMessage(
+          ctx.from.id,
+          `${ctx.user.first_name} \n I found following data in your receipt \n\n ${receiptText} \n\n If above is correct, please hit the like button and will get back to within 24 hours`,
+          AnswerResponse
+        );
       }
     }
     if (message?.document) {

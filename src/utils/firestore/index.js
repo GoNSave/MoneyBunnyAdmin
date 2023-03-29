@@ -1,7 +1,7 @@
 import { fireDb, fireStorage } from "../fireConfig";
 import { getUser } from "../firebase";
 import { telegramBot } from "../telegram";
-import { userDocName, chatDocName, filesDocName } from "../constants";
+import { userDocName, chatDocName, filesDocName } from "@/utils/constants";
 import { doc, setDoc } from "firebase/firestore/lite";
 
 import { uploadBytes, ref, getDownloadURL } from "firebase/storage";

@@ -1,6 +1,6 @@
-import { bot } from "../telegram";
+import { bot } from "@/utils/telegram";
 const { Configuration, OpenAIApi } = require("openai");
-import { AnswerResponse } from "../constants";
+import { AnswerResponse } from "@/utils/constants";
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY_GNS,
@@ -34,6 +34,7 @@ export const getAnswer = async (question) => {
 
   return r3.data.choices[0].text;
 };
+
 export const getReceiptData = async (scannedData) => {
   const openai = new OpenAIApi(configuration);
 
@@ -42,29 +43,32 @@ export const getReceiptData = async (scannedData) => {
   ${scannedData}
 
   {
-    "user": {
-      "telegramId": "insert telegramId here",
-      "company": "insert company name here",
-      "vehicle": "insert vehicle type here",
-      "name": "insert name here",
-      "zone": "insert zone here"
+    user: {
+      telegramId: "insert telegramId here",
+      company: "insert company name here",
+      vehicle: "insert vehicle type here",
+      name: "insert name here",
+      zone: "insert zone here"
     },
-    "time": "insert time here",
-    "date": "insert date here",
-    "location": {
-      "start": "insert start location here",
-      "end": "insert end location here",
-      "stops": "insert stops here"
+    time: "insert time here",
+    date: "insert date here",
+    location: {
+      start: "insert start location here",
+      end: "insert end location here",
+      stops: "insert stops here"
     },
-    "distance": "insert distance here",
-    "payment": {
-      "method": "insert payment method here",
-      "netEarnings": "insert net earnings here",
-      "deliveryFee": "insert delivery fee here",
-      "earningAdjustment": "insert earning adjustment here",
-      "totalEarning": "insert total earning here",
-      "tip": "insert tip here"
-    }
+    distance: "insert distance here",
+    payment: {
+      method: "insert payment method here",
+      netEarnings: "insert net earnings here",
+      deliveryFee: "insert delivery fee here",
+      earningAdjustment: "insert earning adjustment here",
+      totalEarning: "insert total earning here",
+      tip: "insert tip here"
+    },
+    status: "added",
+    basket: "1.0",
+    week: 88,
   }
 
   Answer:`;
@@ -76,7 +80,10 @@ export const getReceiptData = async (scannedData) => {
     temperature: 0.2,
   });
 
-  return r3.data.choices[0].text;
+  const jsonString = r3.data.choices[0].text;
+  // const jsonObject = JSON.parse(jsonString);
+
+  return jsonString;
 };
 
 export const handleQuestion = async (ctx) => {
