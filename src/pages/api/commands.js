@@ -127,11 +127,7 @@ export const commands = [
     command: "/tutorial",
     description: "Learn to do less and save more 🔮",
     func: async (ctx, param) => {
-      let readStream = fs.createReadStream(
-        "/Users/ashokjaiswal/Downloads/WhatsApp Image 2023-03-14 at 12.20.20 PM.jpeg"
-      );
       let form = new FormData();
-
       // Send the photo to the user
       try {
         const imageUrl =

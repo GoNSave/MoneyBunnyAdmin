@@ -1,11 +1,26 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
+import React, { useState, useEffect } from "react";
+// import { TelegramBot } from "node-telegram-bot-api";
+// const TelegramBot = require("node-telegram-bot-api");
 
-const inter = Inter({ subsets: ['latin'] })
+// const bot = new TelegramBot(process.env.TELEGRAM_TOKEN_GNSGPTBOT);
+
+import Head from "next/head";
+import Image from "next/image";
+import { Inter } from "next/font/google";
+import styles from "@/styles/Home.module.css";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const telegramIds = [5684756976, 1863422087];
+  // console.log("index page loaded", telegramIds);
+  //add useEffect and call sendAnnouncement function
+  // await bot.sendMessage(
+  //   telegramId,
+  //   `Hi ${ctx.from.first_name}! 👋 \nAs an AI language model, I'm here to assist you in finding information quickly and easily, making your work more efficient`,
+  //   keyboard
+  // );
+
   return (
     <>
       <Head>
@@ -26,7 +41,7 @@ export default function Home() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              By{' '}
+              By{" "}
               <Image
                 src="/vercel.svg"
                 alt="Vercel Logo"
@@ -119,5 +134,5 @@ export default function Home() {
         </div>
       </main>
     </>
-  )
+  );
 }

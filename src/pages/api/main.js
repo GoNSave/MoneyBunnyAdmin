@@ -9,6 +9,7 @@ import { handleQuestion } from "@/utils/openai";
 import { updateUser } from "@/utils/firebase";
 import { surveyResponse } from "./survey";
 import { LikeDislikeMainMenu } from "@/utils/constants";
+import { handleAnnouncement } from "@/utils/announcement";
 
 const validateReceipt = (receipt) => {
   const template = {
@@ -68,9 +69,16 @@ async function handler(request, response) {
 
     const { message } = request.body;
 
-    console.log(message);
+    // console.log(message);
 
     if (message?.photo) {
+      const captions = message.caption.split(" ");
+      // console.log(message.caption);
+      if (captions[0] === "announcement") {
+        handleAnnouncement(ctx, message);
+        return response.send("OK");
+      }
+      return response.send("OK");
       await bot.sendMessage(
         ctx.from.id,
         `Please wait, let me check your receipt...`
