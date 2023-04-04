@@ -124,6 +124,17 @@ export const commands = [
     },
   },
   {
+    command: "/reset",
+    function: async (ctx, param) => {
+      await updateUser({
+        telegramId: ctx.from.id,
+        lastCommand: "none",
+      });
+      const weather = "Your survey has been updated";
+      return reply(ctx, weather);
+    },
+  },
+  {
     command: "/tutorial",
     description: "Learn to do less and save more 🔮",
     func: async (ctx, param) => {
