@@ -293,7 +293,11 @@ export const actions = [
     action: "handleFuelCredit",
     func: async (ctx, param) => {
       await bot.sendMessage(ctx.from.id, `Hi ${ctx.from.first_name}`);
-      await bot.sendMessage(ctx.from.id, `Sure, I will contact you`);
+      return await bot.sendMessage(
+        ctx.from.id,
+        `Sure, I will contact you`,
+        MainMenu
+      );
     },
   },
   {
