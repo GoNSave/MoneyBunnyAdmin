@@ -1,5 +1,5 @@
 import { Typography, Sheet, List, Box, Input } from "@mui/joy/";
-import { SendOutlinedIcon } from "@/icons";
+
 import { COLORS } from "@/styles/colors";
 
 export default function App() {
@@ -38,14 +38,6 @@ export default function App() {
             // onChange={(event) => setQuestion(event.target.value)}
             // onKeyPress={handleEnter}
             placeholder="Write an employment contract for Ashok Jaiswal in Hong Kong as Tech Lead ..."
-          />
-          <SendOutlinedIcon
-            style={{
-              cursor: "pointer",
-              fontSize: 25,
-              color: COLORS.blue_D6,
-            }}
-            onClick={() => askQuestion()}
           />
         </Box>
       </Box>

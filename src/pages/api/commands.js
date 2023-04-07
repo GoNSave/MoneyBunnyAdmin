@@ -11,6 +11,7 @@ const fs = require("fs");
 const FormData = require("form-data");
 
 export async function onCommand(ctx, command, param) {
+  console.log(`find command`, command);
   const execCommand = commands.find((c) => c.command === command);
   if (execCommand && execCommand.func) {
     return execCommand.func(ctx, param);
@@ -124,7 +125,7 @@ export const commands = [
     },
   },
   {
-    command: "/reset",
+    command: "/restart",
     function: async (ctx, param) => {
       await updateUser({
         telegramId: ctx.from.id,
