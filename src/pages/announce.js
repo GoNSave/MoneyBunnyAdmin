@@ -1,5 +1,3 @@
-import { Typography, Sheet, List, Box, Input } from "@mui/joy/";
-
 import { COLORS } from "@/styles/colors";
 
 export default function App() {
