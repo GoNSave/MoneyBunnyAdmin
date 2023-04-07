@@ -320,7 +320,9 @@ export async function handleStartSurvey(ctx) {
         force_reply: true,
         resize_keyboard: true,
         one_time_keyboard: false,
-        keyboard: [[{ text: "🏁 " }, { text: "Let's Go " }, { text: "🏁 " }]],
+        keyboard: [
+          [{ text: "🏁 " }, { text: "Yes, Let's Go " }, { text: "🏁 " }],
+        ],
       },
     }
   );

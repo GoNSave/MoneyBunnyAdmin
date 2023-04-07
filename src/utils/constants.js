@@ -88,6 +88,12 @@ export const MainMenu = {
       ],
       [
         {
+          text: "Apply to extend fuel credit",
+          callback_data: "handleFuelCredit:Incentives",
+        },
+      ],
+      [
+        {
           text: "❓ Help",
           callback_data: "handleHelp:Help me now and help the world",
         },
