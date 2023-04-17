@@ -4,6 +4,7 @@ import { handleStartSurvey } from "./survey";
 import { defaultResponse } from "@/utils/constants";
 import { bot } from "@/utils/telegram";
 import { MainMenu } from "@/utils/constants";
+import { updateUser } from "@/utils/firebase";
 
 const path = require("path");
 const axios = require("axios");
@@ -40,7 +41,7 @@ export const commands = [
     func: async (ctx, param) => {
       return await bot.sendMessage(
         ctx.chat.id,
-        `Hi ${ctx.from.first_name}! \nPlease chose from the menu below to continue...`,
+        `Hi ${ctx.from.first_name}! \nPlease choose from the menu below to continue...`,
         MainMenu
       );
     },
@@ -111,8 +112,27 @@ export const commands = [
     command: "/weather",
     description: "Get the current weather forecast 🌤️",
     func: async (ctx, param) => {
+      console.log("reset command received");
+      await updateUser({
+        telegramId: ctx.from.id,
+        lastCommand: "none",
+        questionIndex: 0,
+      });
+      const weather = "Your survey has been updated";
+      return reply(ctx, weather);
+    },
+  },
+  {
+    command: "/reset",
+    description: "Get the current weather forecast 🌤️",
+    func: async (ctx, param) => {
+      await updateUser({
+        telegramId: ctx.from.id,
+        lastCommand: "none",
+        questionIndex: 0,
+      });
       const weather =
-        "The weather today is sunny with a high of 25 degrees Celsius.";
+        "Your survey has been updated, please /start to complete your survey";
       return reply(ctx, weather);
     },
   },
@@ -124,17 +144,20 @@ export const commands = [
       return reply(ctx, horoscope);
     },
   },
-  {
-    command: "/restart",
-    function: async (ctx, param) => {
-      await updateUser({
-        telegramId: ctx.from.id,
-        lastCommand: "none",
-      });
-      const weather = "Your survey has been updated";
-      return reply(ctx, weather);
-    },
-  },
+  // {
+  //   command: "/reset",
+  //   description: "Reset the survey",
+  //   function: async (ctx, param) => {
+  //     console.log("reset command received");
+  //     await updateUser({
+  //       telegramId: ctx.from.id,
+  //       lastCommand: "none",
+  //       questionIndex: 0,
+  //     });
+  //     const weather = "Your survey has been updated";
+  //     return reply(ctx, weather);
+  //   },
+  // },
   {
     command: "/tutorial",
     description: "Learn to do less and save more 🔮",

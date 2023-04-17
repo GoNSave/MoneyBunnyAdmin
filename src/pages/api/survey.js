@@ -27,7 +27,7 @@ import { getQuestionsFromSheet } from "@/utils/gsheet";
 //     key: "age",
 //   },
 //   {
-//     question: "Chose the delivery company you work for the most: 🏍️ 🚴 🚗 ",
+//     question: "choose the delivery company you work for the most: 🏍️ 🚴 🚗 ",
 //     answers: [
 //       [{ text: "🛵 Grab" }, { text: "🍽️ FoodPanda" }, { text: "🍕 Deliveroo" }],
 //     ],
@@ -165,7 +165,7 @@ import { getQuestionsFromSheet } from "@/utils/gsheet";
 const showMainMenu = async (ctx, text) => {
   const ret = await bot.sendMessage(
     ctx.chat.id,
-    `Hi ${ctx.from.first_name}! \n ${text} Please chose one of the following to continue? \n\n`,
+    `Hi ${ctx.from.first_name}! \n ${text} Please choose one of the following to continue? \n\n`,
     MainMenu
   );
 };
@@ -228,7 +228,7 @@ export async function surveyResponse(ctx) {
       return handleQuestion(
         ctx,
         questions[qIndex - 1],
-        `"${ctx.text}" is invalid answer, please chose one of the following... \n\n`,
+        `"${ctx.text}" is invalid answer, please choose one of the following... \n\n`,
         qIndex >= questions.length - 1
       );
     }

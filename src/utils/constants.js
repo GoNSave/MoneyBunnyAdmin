@@ -113,15 +113,15 @@ export const EditProfile = {
     inline_keyboard: [
       [
         {
-          text: "💸 Company",
+          text: "🏪 Company",
           callback_data: "handleEditProfile:2",
         },
         {
-          text: "💸 Vehicle",
+          text: "🚴🏻‍♀️ Vehicle",
           callback_data: "handleEditProfile:3",
         },
         {
-          text: "🗣 Zone",
+          text: "🚏 Zone",
           callback_data: "handleEditProfile:4",
         },
       ],
@@ -226,7 +226,7 @@ export const defaultResponse = async (ctx, msg = "") => {
   // console.log("---- defaultResponse ----", ctx, msg);
   return await bot.sendMessage(
     ctx.chat.id,
-    `Hi ${ctx.from.first_name}! \n\n ${msg} \n\n Please chose one of the following to continue... \n\nThanks`,
+    `Hi ${ctx.from.first_name}! \n\n ${msg} \n\n Please choose one of the following to continue... \n\nThanks`,
     MainMenu
   );
 };

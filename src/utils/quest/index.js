@@ -4,7 +4,7 @@ export async function getQuestData(zone, vehicle, period) {
   console.log("getQuestData", zone, vehicle, period);
   const sheetIndex = period === "Next Week" ? 1 : 0;
   let message = `${zone} incentive for ${vehicle} ${period}:\n`;
-
+  let found = false;
   try {
     const private_key = process.env.GOOGLE_PRIVATE_KEY;
     const doc = new GoogleSpreadsheet(process.env.GOOGLE_SHEET_QUEST_DATA_ID);
@@ -39,6 +39,7 @@ export async function getQuestData(zone, vehicle, period) {
         .map((v) => v.trim());
 
       if (zone1.includes(zone) || zone2.includes(zone)) {
+        found = true;
         message += `\n📅 ${rows[row]._rawData[1]} 📅\n`;
         for (let i = row; i < row + 5; i++) {
           message += `Make ${rows[i]._rawData[2]} orders 👉 receive ${rows[i]._rawData[4]}\n`;
@@ -48,5 +49,8 @@ export async function getQuestData(zone, vehicle, period) {
   } catch (e) {
     console.log(e);
   }
-  return message;
+
+  return found
+    ? message
+    : `I don't see any Quest Incentives, for this period 🤔`;
 }

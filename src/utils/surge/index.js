@@ -101,7 +101,7 @@ export async function getSurgeData(zone, time) {
         }
         if (!feeFound) {
           return (
-            "No surge fee is availble in " +
+            "No surge fee is available in " +
             zone +
             " next " +
             duration +

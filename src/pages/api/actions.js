@@ -64,7 +64,7 @@ export const actions = [
       const telegramId = ctx?.from?.id ? ctx?.from?.id : ctx?.chat?.id;
       await bot.sendMessage(
         telegramId,
-        `Hi ${ctx.from.first_name}! 👋 \nAs an AI language model, I'm here to assist you in finding information quickly and easily, making your work more efficient`,
+        `Hi ${ctx.from.first_name}! 👋 \nI am PawLee, I'm here to assist you in finding information quickly and easily, making your work more efficient`,
         keyboard
       );
       return await bot.sendMessage(
@@ -134,7 +134,7 @@ export const actions = [
     func: async (ctx, param) => {
       return await bot.sendMessage(
         ctx.from.id,
-        `\n You can make extra money 💵 to work during surge hours 🏃‍♂️, Please chose the surge time for extra fee 💰... `,
+        `\n You can make extra money 💵 to work during surge hours 🏃‍♂️, Please choose the surge time for extra fee 💰... `,
         SurgeFee
       );
     },
@@ -145,7 +145,7 @@ export const actions = [
     func: async (ctx, param) => {
       return await bot.sendMessage(
         ctx.from.id,
-        `\n Please chose one of the following to continue... `,
+        `\n Please choose one of the following to continue... `,
         MainMenu
       );
     },
@@ -157,7 +157,7 @@ export const actions = [
     func: async (ctx, param) => {
       return await bot.sendMessage(
         ctx.from.id,
-        `Please chose the profile detail to edit..\n`,
+        `Please choose the profile detail to edit..\n`,
         EditProfile
       );
     },
@@ -212,7 +212,7 @@ export const actions = [
 
       return await bot.sendMessage(
         ctx.from.id,
-        `Please chose from following options to continue ...\n`,
+        `Please choose from following options to continue ...\n`,
         EditProfileDetails
       );
     },
@@ -252,7 +252,7 @@ export const actions = [
     func: async (ctx, param) => {
       return await bot.sendMessage(
         ctx.from.id,
-        `Chose the action below\n`,
+        `choose the action below\n`,
         MainMenu
       );
     },
@@ -295,7 +295,7 @@ export const actions = [
       await bot.sendMessage(ctx.from.id, `Hi ${ctx.from.first_name}`);
       return await bot.sendMessage(
         ctx.from.id,
-        `Sure, I will contact you`,
+        `Sure, I will contact you within 24 hours.`,
         MainMenu
       );
     },
@@ -363,7 +363,7 @@ export const actions = [
 export async function handleBackToMainMenu(ctx, param) {
   return await bot.sendMessage(
     ctx.chat.id,
-    `Hi ${ctx.from.first_name}! \n\n ${msg} \n\n Please chose one of the following to continue... \n\nThanks`,
+    `Hi ${ctx.from.first_name}! \n\n ${msg} \n\n Please choose one of the following to continue... \n\nThanks`,
     MainMenu
   );
 }
