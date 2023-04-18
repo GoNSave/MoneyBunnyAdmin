@@ -1,5 +1,7 @@
 import { bot, reply } from "./telegram";
 
+export const helperDocName = "helpers";
+export const ridersDocName = "riders";
 export const userDocName = "users";
 export const receiptDocName = "receipts";
 export const countryDocName = "country";
@@ -227,6 +229,14 @@ export const defaultResponse = async (ctx, msg = "") => {
   return await bot.sendMessage(
     ctx.chat.id,
     `Hi ${ctx.from.first_name}! \n\n ${msg} \n\n Please choose one of the following to continue... \n\nThanks`,
+    MainMenu
+  );
+};
+
+export const showMainMenu = async (ctx, bot, text) => {
+  const ret = await bot.sendMessage(
+    ctx.chat.id,
+    `Hi ${ctx.from.first_name}! \n ${text} Please choose one of the following to continue? \n\n`,
     MainMenu
   );
 };

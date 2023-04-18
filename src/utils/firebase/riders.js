@@ -1,6 +1,6 @@
 import { fireDb } from "../fireConfig";
 import {
-  userDocName,
+  ridersDocName,
   chatDocName,
   questionsDocName,
   countryDocName,
@@ -21,7 +21,7 @@ import {
 } from "firebase/firestore/lite";
 
 export const saveMessage = async (message, answer) => {
-  const user = await getUser({
+  const user = await getRider({
     telegramId: message.from.id,
     firstName: message.from.first_name,
     lastName: message.from.last_name,
@@ -30,7 +30,7 @@ export const saveMessage = async (message, answer) => {
 
   const chatRef = doc(
     fireDb,
-    `${userDocName}/${user.id}/${chatDocName}`,
+    `${ridersDocName}/${user.id}/${chatDocName}`,
     `${message.date}`
   );
   await setDoc(chatRef, {
@@ -136,9 +136,9 @@ export const getZones = async (country, city) => {
   }));
 };
 
-export const getUser = async (user) => {
+export const getRider = async (user) => {
   const q = query(
-    collection(fireDb, userDocName),
+    collection(fireDb, ridersDocName),
     where("telegramId", "==", user.telegramId)
   );
 
@@ -170,15 +170,15 @@ export const updateReceipt = async (user, downloadUrl) => {
 };
 
 export const addReceipt = async (user, downloadUrl) => {
-  const docRef = await addDoc(collection(fireDb, userDocName), user);
+  const docRef = await addDoc(collection(fireDb, ridersDocName), user);
   const docSnapshot = await getDoc(docRef);
   return { id: docSnapshot.id, ...docSnapshot.data() };
 };
 
-export const updateUser = async (user) => {
-  console.log("Updating user", user);
+export const updateRider = async (user) => {
+  console.log("Updating rider", user);
   const q = query(
-    collection(fireDb, userDocName),
+    collection(fireDb, ridersDocName),
     where("telegramId", "==", user.telegramId)
   );
 
@@ -195,7 +195,7 @@ export const updateUser = async (user) => {
 };
 
 export const addUser = async (user) => {
-  const docRef = await addDoc(collection(fireDb, userDocName), user);
+  const docRef = await addDoc(collection(fireDb, ridersDocName), user);
   const docSnapshot = await getDoc(docRef);
   return { id: docSnapshot.id, ...docSnapshot.data() };
 };
@@ -233,8 +233,8 @@ export const getAnswers = async (questionId) => {
   }));
 };
 
-export const getUsers = async () => {
-  const q = query(collection(fireDb, userDocName));
+export const getRiders = async () => {
+  const q = query(collection(fireDb, ridersDocName));
 
   const querySnapshot = await getDocs(q);
 

@@ -1,5 +1,5 @@
 import { fireDb, fireStorage } from "../fireConfig";
-import { getUser } from "../firebase";
+import { getRider } from "@/utils/firebase/riders";
 import { telegramBot } from "../telegram";
 import { userDocName, chatDocName, filesDocName } from "@/utils/constants";
 import { doc, setDoc } from "firebase/firestore/lite";
@@ -15,7 +15,7 @@ export const saveFile = async (user, photo, caption) => {
   const filePath = file.file_path;
   const downloadUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_TOKEN_GNSGPTBOT}/${filePath}`;
 
-  const retUser = await getUser(user);
+  const retUser = await getRider(user);
   if (!retUser) return null;
 
   const fileExtension = downloadUrl.split(".").pop();
